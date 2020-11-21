@@ -4,14 +4,19 @@ import requests
 from selenium import webdriver
 import pandas as pd
 import time
+from selenium.webdriver.chrome.options import Options
 tt = time.strftime('%Y-%m-%d', time.localtime(time.time()))
 
 
 driver_path = "/home/ubuntu/chromedriver"
 url = "https://kr.investing.com/portfolio/?portfolioID=Y2c1YG4%2FYj5iNjw1YjI0Pg%3D%3D"
 headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'}
+chrome_options = Options()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
 
-driver = webdriver.Chrome(driver_path)
+driver = webdriver.Chrome(driver_path,chrome_options=chrome_options)
 driver.get(url)
 time.sleep(0.3)
 
@@ -122,7 +127,7 @@ print(df)
 
 
 ### 만든 데이터프레임 csv파일로 저장하고, 크롬창 닫기 ###
-df.to_csv('/users/sanghyeok/desktop/Investing.csv', mode = 'w', encoding = 'cp949')
+df.to_csv('/home/ubuntu/Investing.csv', mode = 'w', encoding = 'cp949')
 #driver.close()
 
 
@@ -148,7 +153,7 @@ msg.attach(MIMEText('본문입니다\nhttps://kr.investing.com/news/forex-news/a
 
 
 ### 파일 첨부 ###
-attachment = open('/Users/sanghyeok/Desktop/Investing.csv', 'rb')
+attachment = open('/home/ubuntu/Investing.csv', 'rb')
 part = MIMEBase('application', 'octet-stream')
 part.set_payload((attachment).read())
 encoders.encode_base64(part)
