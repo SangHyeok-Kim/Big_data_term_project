@@ -76,7 +76,7 @@ while(1):
 
             mail_pp_news = '{} ({})\n{}\n\n'.format(pp_news_title[0], pp_news_title_time[0], pp_news_href[0])
             for i in range(1, 20):
-            mail_pp_news += '{} ({})\n{}\n\n'.format(pp_news_title[i], pp_news_title_time[i], pp_news_href[i])
+                mail_pp_news += '{} ({})\n{}\n\n'.format(pp_news_title[i], pp_news_title_time[i], pp_news_href[i])
 
 
             ###포트폴리오 속 주식들의 이름(NAME), 페이지링크(HREF), 고유 pair-id값(PAIRID) 수집###
