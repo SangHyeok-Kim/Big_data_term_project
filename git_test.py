@@ -4,36 +4,61 @@ import requests
 from selenium import webdriver
 import pandas as pd
 import time
-from selenium.webdriver.chrome.options import Options
 tt = time.strftime('%Y-%m-%d', time.localtime(time.time()))
 
 
 driver_path = "/home/ubuntu/chromedriver"
 url = "https://kr.investing.com/portfolio/?portfolioID=Y2c1YG4%2FYj5iNjw1YjI0Pg%3D%3D"
 headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'}
-chrome_options = Options()
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
 
-driver = webdriver.Chrome(driver_path,chrome_options=chrome_options)
+driver = webdriver.Chrome(driver_path)
 driver.get(url)
 time.sleep(0.3)
 
 username = 'slsnsi@naver.com'
-password = 'tkD282538*'
+password = 'bigdata1212'
 
 
-### 로그인 -> 내 포트폴리오 -> 가격이 가장 많이 내려간 순서대로 나열 ###
-time.sleep(1.5)
+### 로그인 -> 내 포트폴리오 -> 가격이 가장 많이 오른 순서대로 나열 ###
+time.sleep(2)
 driver.find_element_by_xpath('//*[@id="loginFormUser_email"]').send_keys(username)
 driver.find_element_by_xpath('//*[@id="loginForm_password"]').send_keys(password)
 driver.find_element_by_xpath('//*[@id="signup"]/a').click()
-time.sleep(1.5)
+time.sleep(2)
 driver.find_element_by_xpath('//*[@id="navMenu"]/ul/li[10]/a').click()
-time.sleep(1.5)
+time.sleep(2)
 driver.find_element_by_xpath('//*[@id="portfolioData_16702538"]/div/table/thead/tr/th[16]').click()
-time.sleep(1.5)
+driver.find_element_by_xpath('//*[@id="portfolioData_16702538"]/div/table/thead/tr/th[16]').click()
+time.sleep(2)
+
+for i in range(4):
+    driver.find_element_by_xpath('//*[@id="paginationShowMoreText"]').click()
+    time.sleep(3)
+
+
+print('최신 포트폴리오 뉴스를 파싱중입니다...')
+pp_news_title = []
+pp_news_title_time = []
+pp_news_href = []
+for i in range(1, 20+1):  #최신 20개 기사추출
+    title_xpath = driver.find_element_by_xpath('//*[@id="fullColumn"]/div[7]/div[8]/div[1]/div/article[{}]/div[1]/a'.format(i))
+    try:
+        title_xpath_time = driver.find_element_by_xpath('//*[@id="fullColumn"]/div[7]/div[8]/div[1]/div/article[{}]/div[1]/div/span[2]'.format(i))
+    except:
+        title_xpath_time = driver.find_element_by_xpath('//*[@id="fullColumn"]/div[7]/div[8]/div[1]/div/article[{}]/div[1]/span/span[2]'.format(i))
+
+    title_text = title_xpath.text
+    title_time = title_xpath_time.text
+    title_time = title_time.replace(' ', '').replace('-', '')
+    title_href = title_xpath.get_attribute('href')
+
+    pp_news_title.append(title_text)
+    pp_news_title_time.append(title_time)
+    pp_news_href.append(title_href)
+
+mail_pp_news = '{} ({})\n{}\n\n'.format(pp_news_title[0], pp_news_title_time[0], pp_news_href[0])
+for i in range(1, 20):
+   mail_pp_news += '{} ({})\n{}\n\n'.format(pp_news_title[i], pp_news_title_time[i], pp_news_href[i])
 
 
 ###포트폴리오 속 주식들의 이름(NAME), 페이지링크(HREF), 고유 pair-id값(PAIRID) 수집###
@@ -128,10 +153,59 @@ print(df)
 
 ### 만든 데이터프레임 csv파일로 저장하고, 크롬창 닫기 ###
 df.to_csv('/home/ubuntu/Investing.csv', mode = 'w', encoding = 'cp949')
-#driver.close()
+driver.close()
 
 
 
+
+### 원/달러, 나스닥100 지수 파싱 ###
+print('원/달러 파싱중입니다...')
+USD_KRW_url = 'https://kr.investing.com/currencies/usd-krw'
+headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'}
+request_url = requests.get(USD_KRW_url, headers = headers)
+soup = BeautifulSoup(request_url.content, 'html.parser')
+
+exch_won = soup.select_one('#last_last')
+
+exch_won_bd = soup.select_one('div.inlineblock > div.top.bold.inlineblock > span.arial_20.redFont.pid-650-pc')
+if exch_won_bd == None:
+    exch_won_bd = soup.select_one('div.inlineblock > div.top.bold.inlineblock > span.arial_20.greenFont.pid-650-pc')
+
+exch_won_bd_rate = soup.select_one('div.top.bold.inlineblock > span.arial_20.redFont.pid-650-pcp.parentheses')
+if exch_won_bd_rate == None:
+    exch_won_bd_rate = soup.select_one('div.top.bold.inlineblock > span.arial_20.greenFont.pid-650-pcp.parentheses')
+
+exch_won = exch_won.get_text().strip()
+exch_won_bd = exch_won_bd.get_text().strip()
+exch_won_bd_rate = exch_won_bd_rate.get_text().strip()
+
+mail_exchange = "<원/달러 환율>\n{}원\n{} ({})".format(exch_won, exch_won_bd, exch_won_bd_rate)
+
+print('나스닥100 파싱중입니다...')
+NDX_url = 'https://kr.investing.com/indices/nq-100'
+headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'}
+request_url = requests.get(NDX_url, headers = headers)
+soup = BeautifulSoup(request_url.content, 'html.parser')
+
+NDX = soup.select_one('#last_last')
+
+NDX_bd = soup.select_one('div.inlineblock > div.top.bold.inlineblock > span.arial_20.redFont.pid-20-pc')
+if NDX_bd == None:
+    NDX_bd = soup.select_one('div.inlineblock > div.top.bold.inlineblock > span.arial_20.greenFont.pid-20-pc')
+
+NDX_bd_rate = soup.select_one('div.top.bold.inlineblock > span.arial_20.redFont.pid-20-pcp.parentheses')
+if NDX_bd_rate == None:
+    NDX_bd_rate = soup.select_one('div.top.bold.inlineblock > span.arial_20.greenFont.pid-20-pcp.parentheses')
+
+NDX = NDX.get_text().strip()
+NDX_bd = NDX_bd.get_text().strip()
+NDX_bd_rate = NDX_bd_rate.get_text().strip()
+
+mail_NDX = '<나스닥100>\n{}\n{} ({})'.format(NDX, NDX_bd, NDX_bd_rate)
+
+
+
+print('메일 전송중입니다...')
 ### 만들어진 csv파일을 메일로 전송하기 ###
 import smtplib
 from email.mime.text import MIMEText
@@ -148,8 +222,8 @@ s.login('slsnsi1212@gmail.com', 'ijesmhehsdnopohk')
 
 ### 제목 & 본문 작성 ###
 msg = MIMEMultipart()
-msg['Subject'] = '제목입니다'
-msg.attach(MIMEText('본문입니다\nhttps://kr.investing.com/news/forex-news/article-523621', 'plain'))
+msg['Subject'] = '오늘의 포트폴리오 리포트'
+msg.attach(MIMEText(mail_exchange+'\n\n'+mail_NDX+'\n\n\n\n'+mail_pp_news, 'plain'))
 
 
 ### 파일 첨부 ###
@@ -157,7 +231,7 @@ attachment = open('/home/ubuntu/Investing.csv', 'rb')
 part = MIMEBase('application', 'octet-stream')
 part.set_payload((attachment).read())
 encoders.encode_base64(part)
-part.add_header('Content-Disposition', "attachment; filename= " + '{}report.csv'.format(tt))
+part.add_header('Content-Disposition', "attachment; filename= " + '{}.csv'.format(YMD))
 msg.attach(part)
 
 
