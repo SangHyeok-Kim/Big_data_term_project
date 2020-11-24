@@ -24,6 +24,7 @@ while(1):
     now_time = (time.strftime('%H%M%S', time.localtime(time.time())))
 
     if now_day in condition_day and now_time == condition_time:
+        print('서비스를 시작합니다')
         YMD = time.strftime('%Y-%m-%d', time.localtime(time.time()))
 
         driver_path = "/home/ubuntu/chromedriver"
