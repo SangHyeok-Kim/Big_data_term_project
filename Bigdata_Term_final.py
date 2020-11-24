@@ -257,3 +257,4 @@ while(1):
         ### 메일 전송 ###
         s.sendmail("slsnsi1212@gmail.com", "slsnsi1212@gmail.com", msg.as_string())
         s.quit()
+        print('메일 전송이 완료되었습니다')
