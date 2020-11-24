@@ -7,7 +7,15 @@ import time
 import datetime
 from selenium.webdriver.chrome.options import Options
 
-condition_day = ['1', '2', '3', '4', '5']
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
+
+
+
+condition_day = ['2', '3', '4', '5', '6'] #뉴욕시각 월~금 = 한국시각 화~토 
 condition_time = '080000'
 
 while(1):
@@ -219,14 +227,9 @@ while(1):
 
 
 
-        print('메일 전송중입니다...')
+        
         ### 만들어진 csv파일을 메일로 전송하기 ###
-        import smtplib
-        from email.mime.text import MIMEText
-        from email.mime.multipart import MIMEMultipart
-        from email.mime.base import MIMEBase
-        from email import encoders
-
+        print('메일 전송중입니다...')
 
         ### 메일 세션생성 & 로그인 ###
         s = smtplib.SMTP('smtp.gmail.com', 587)
