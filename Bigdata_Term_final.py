@@ -51,8 +51,12 @@ while(1):
         driver.find_element_by_xpath('//*[@id="loginForm_password"]').send_keys(password)
         driver.find_element_by_xpath('//*[@id="signup"]/a').click()
         time.sleep(10)
-        driver.find_element_by_xpath('//*[@id="navMenu"]/ul/li[10]/a').click()
+
+        #포트폴리오 url로 이동
+        driver.get('https://kr.investing.com/portfolio/?portfolioID=YmZlMDRlM28xZWpjM2MyOA%3D%3D')
         time.sleep(10)
+
+        #변동선 +값 큰 순서대로 나열
         driver.find_element_by_xpath('//*[@id="portfolioData_16702538"]/div/table/thead/tr/th[16]').click()
         time.sleep(1)
         driver.find_element_by_xpath('//*[@id="portfolioData_16702538"]/div/table/thead/tr/th[16]').click()
