@@ -39,22 +39,35 @@ while(1):
     
         driver = webdriver.Chrome(driver_path, chrome_options=chrome_options)
         driver.get(url)
+        time.sleep(10)
 
         username = 'slsnsi@naver.com'
         password = 'bigdata1212'
 
 
         ### 로그인 -> 내 포트폴리오 -> 가격이 가장 많이 오른 순서대로 나열 ###
-        time.sleep(10)
+        print('로그인 중입니다...')
         driver.find_element_by_xpath('//*[@id="loginFormUser_email"]').send_keys(username)
         time.sleep(1)
         driver.find_element_by_xpath('//*[@id="loginForm_password"]').send_keys(password)
+        time.sleep(1)
         driver.find_element_by_xpath('//*[@id="signup"]/a').click()
         time.sleep(10)
 
+
+        #팝업창 있을 경우 끄기
+        try:
+            driver.find_element_by_xpath('//*[@id="ab-intro"]/span/i').click()
+            time.sleep(1)
+        except:
+            pass
+
+
         #포트폴리오 url로 이동
+        print('포트폴리오를 확인중입니다...')
         driver.get('https://kr.investing.com/portfolio/?portfolioID=YmZlMDRlM28xZWpjM2MyOA%3D%3D')
-        time.sleep(10)
+        time.sleep(5)
+
 
         #변동선 +값 큰 순서대로 나열
         driver.find_element_by_xpath('//*[@id="portfolioData_16702538"]/div/table/thead/tr/th[16]').click()
@@ -64,7 +77,7 @@ while(1):
 
         for i in range(4):
             driver.find_element_by_xpath('//*[@id="paginationShowMoreText"]').click()
-            time.sleep(5)
+            time.sleep(3)
 
 
         print('최신 포트폴리오 뉴스를 파싱중입니다...')
