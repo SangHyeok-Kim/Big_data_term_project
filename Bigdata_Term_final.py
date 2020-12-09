@@ -200,7 +200,9 @@ while(1):
 
 
         ### 원/달러, 나스닥100 지수 파싱 ###
+
         print('원/달러 파싱중입니다...')
+                
         USD_KRW_url = 'https://kr.investing.com/currencies/usd-krw'
         headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'}
         request_url = requests.get(USD_KRW_url, headers = headers)
@@ -208,19 +210,21 @@ while(1):
 
         exch_won = soup.select_one('#last_last')
 
-        exch_won_bd = soup.select_one('div.inlineblock > div.top.bold.inlineblock > span.arial_20.redFont.pid-650-pc')
+        exch_won_bd = soup.select_one('div.main-current-data > div.top.bold.inlineblock > span.arial_20.pid-650-pc.greenFont')
         if exch_won_bd == None:
-            exch_won_bd = soup.select_one('div.inlineblock > div.top.bold.inlineblock > span.arial_20.greenFont.pid-650-pc')
+            exch_won_bd = soup.select_one('div.main-current-data > div.top.bold.inlineblock > span.arial_20.pid-650-pc.redFont')
 
-        exch_won_bd_rate = soup.select_one('div.top.bold.inlineblock > span.arial_20.redFont.pid-650-pcp.parentheses')
+        exch_won_bd_rate = soup.select_one('div.main-current-data > div.top.bold.inlineblock > span.arial_20.pid-650-pc.greenFont')
         if exch_won_bd_rate == None:
-            exch_won_bd_rate = soup.select_one('div.top.bold.inlineblock > span.arial_20.greenFont.pid-650-pcp.parentheses')
+            exch_won_bd_rate = soup.select_one('div.main-current-data > div.top.bold.inlineblock > span.arial_20.pid-650-pc.redFont')
 
         exch_won = exch_won.get_text().strip()
         exch_won_bd = exch_won_bd.get_text().strip()
         exch_won_bd_rate = exch_won_bd_rate.get_text().strip()
 
-        mail_exchange = "<원/달러 환율>\n{}원\n{} ({})".format(exch_won, exch_won_bd, exch_won_bd_rate)
+
+
+        mail_exchange = ("<원/달러 환율>\n{}원\n{} ({})".format(exch_won, exch_won_bd, exch_won_bd_rate))
 
         print('나스닥100 파싱중입니다...')
         NDX_url = 'https://kr.investing.com/indices/nq-100'
@@ -230,19 +234,19 @@ while(1):
 
         NDX = soup.select_one('#last_last')
 
-        NDX_bd = soup.select_one('div.inlineblock > div.top.bold.inlineblock > span.arial_20.redFont.pid-20-pc')
+        NDX_bd = soup.select_one('div.main-current-data > div.top.bold.inlineblock > span.arial_20.greenFont.pid-20-pc')
         if NDX_bd == None:
-            NDX_bd = soup.select_one('div.inlineblock > div.top.bold.inlineblock > span.arial_20.greenFont.pid-20-pc')
+            NDX_bd = soup.select_one('div.main-current-data > div.top.bold.inlineblock > span.arial_20.redFont.pid-20-pc')
 
-        NDX_bd_rate = soup.select_one('div.top.bold.inlineblock > span.arial_20.redFont.pid-20-pcp.parentheses')
+        NDX_bd_rate = soup.select_one('div.main-current-data > div.top.bold.inlineblock > span.arial_20.greenFont.pid-20-pcp.parentheses')
         if NDX_bd_rate == None:
-            NDX_bd_rate = soup.select_one('div.top.bold.inlineblock > span.arial_20.greenFont.pid-20-pcp.parentheses')
+            NDX_bd_rate = soup.select_one('div.main-current-data > div.top.bold.inlineblock > span.arial_20.redFont.pid-20-pcp.parentheses')
 
         NDX = NDX.get_text().strip()
         NDX_bd = NDX_bd.get_text().strip()
         NDX_bd_rate = NDX_bd_rate.get_text().strip()
 
-        mail_NDX = '<나스닥100>\n{}\n{} ({})'.format(NDX, NDX_bd, NDX_bd_rate)
+        mail_NDX = ('<나스닥100>\n{}\n{} ({})'.format(NDX, NDX_bd, NDX_bd_rate))
 
 
 
