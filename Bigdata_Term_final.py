@@ -28,7 +28,7 @@ while(1):
         YMD = time.strftime('%Y-%m-%d', time.localtime(time.time()))
 
         driver_path = "/home/ubuntu/chromedriver"
-        url = "https://kr.investing.com/portfolio/?portfolioID=Y2c1YG4%2FYj5iNjw1YjI0Pg%3D%3D"
+        url = "https://kr.investing.com/portfolio/"
         headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'}
         
         #리눅스 CLI 환경에서 크롬 드라이버 실행 위한 옵션 설정
@@ -42,7 +42,7 @@ while(1):
         time.sleep(10)
 
         username = 'slsnsi@naver.com'
-        password = 'bigdata1212'
+        password = 'bigdata123'
 
 
         ### 로그인 -> 내 포트폴리오 -> 가격이 가장 많이 오른 순서대로 나열 ###
